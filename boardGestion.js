@@ -1,16 +1,10 @@
-import { newBoard, isLegal, getCasesCount, play, UndoMove, isGameOver, winner } from "./board.js";
-import { randomMove} from "./bot.js";
+import { newBoard, isLegal, play, UndoMove, isGameOver, winner } from "./board.js";
+import { randomMove} from "./bot1.js";
 import { botList } from "./allBots.js";
 
 const piecesName = [null, "rock", "paper", "scissors"];
 const colsName = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
 const piecesImage = ["", "🪨", "📄", "✂️"];
-const casesClass ={
-  1: "color-case-bleu",
-  0: "color-case-vide",
-  "-1": "color-case-rouge"
-}
-
 export const analysisInfo = { depth: 0, move:0, eval:0 }
 
 const PanelStructure = {
@@ -270,6 +264,8 @@ function initBoardElem(affBoard) {
     caseElem.classList.add("case");
     caseElem.classList.add("color-case-vide");
     caseElem.addEventListener("pointerdown", () => {manageClick(affBoard, i)});
+    if (i === 8) caseElem.classList.add("color-case-bleu");
+    if (i === 72) caseElem.classList.add("color-case-rouge");
     affBoard.elem.appendChild(caseElem);
   }
   updateCases(affBoard, [...Array(81).keys()]);
@@ -277,15 +273,11 @@ function initBoardElem(affBoard) {
 
 function updateCases(affBoard, casesIdx) {
   const boardElem = affBoard.elem;
-  const board = affBoard.board;
-  const cases = board.cases;
-  const pieces = board.pieces;
+  const {board, pieces} = affBoard.board;
   for (const i of casesIdx.filter(idx => idx !== null)) { 
     const caseElem = boardElem.children[i];
-    caseElem.className = "case";
     if (affBoard.caseSelect === i) {caseElem.classList.add("case-select");}
     else {caseElem.classList.remove("case-select");}
-    caseElem.classList.add(casesClass[cases[i]]);
     const piece = pieces[i];
     if (piece > 0) {caseElem.classList.remove("shadow-piece-rouge"); caseElem.classList.add("shadow-piece-bleu");}
     else if (piece < 0) {caseElem.classList.remove("shadow-piece-bleu"); caseElem.classList.add("shadow-piece-rouge");}
@@ -298,15 +290,12 @@ function updateInfo(affBoard) {
   const infoElem = affBoard.infoElem;
   const board = affBoard.board;
   if (!infoElem) return;
-  const casesCount = getCasesCount(board);
   infoElem.textContent = !isGameOver(affBoard.board) ? `${board.turn ? "Blue" : "Red"} to play\n\n` : `victory for ${winner(affBoard.board) ? "Blue" : "Red"}\n\n`;
-  infoElem.textContent += `Squares:\n-Blue: ${casesCount[0]}\n-Red: ${casesCount[1]}`;
 }
 
 function manageClick(affBoard, caseIdx) {
   const isBot = affBoard.isBot() && affBoard.mode !== "analysis";
-  const caseSelect = affBoard.caseSelect;
-  const board = affBoard.board;
+  const {caseSelect, board} = affBoard;
   let casesUpdate = [caseIdx];
   if (caseSelect === null) affBoard.caseSelect = caseIdx;
   else if (caseSelect === caseIdx) affBoard.caseSelect = null;
