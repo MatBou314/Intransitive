@@ -5,6 +5,14 @@ import { botList } from "./allBots.js";
 const piecesName = [null, "rock", "paper", "scissors"];
 const colsName = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
 const piecesImage = ["", "🪨", "📄", "✂️"];
+const piecesImg = {
+  1: "/pieces/blueRock.png",
+  2: "/pieces/bluePaper.png",
+  3: "/pieces/blueScissors.png",
+  "-1": "/pieces/redRock.png",
+  "-2": "/pieces/redPaper.png",
+  "-3": "/pieces/redScissors.png"
+}
 export const analysisInfo = { depth: 0, move:0, eval:0 }
 
 const PanelStructure = {
@@ -288,7 +296,14 @@ function updateCases(affBoard, casesIdx) {
     if (piece > 0) {caseElem.classList.remove("shadow-piece-rouge"); caseElem.classList.add("shadow-piece-bleu");}
     else if (piece < 0) {caseElem.classList.remove("shadow-piece-bleu"); caseElem.classList.add("shadow-piece-rouge");}
     else caseElem.classList.remove("shadow-piece-bleu", "shadow-piece-rouge");
-    caseElem.textContent = piecesImage[Math.abs(piece)];
+    if (piece === 0) caseElem.innerHTML = "";
+    else {
+      caseElem.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = piecesImg[piece];
+      img.classList.add("piece");
+      caseElem.appendChild(img);
+    }
   }
 }
 

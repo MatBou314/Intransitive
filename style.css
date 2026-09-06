@@ -51,16 +51,11 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: clamp(5px, 1.7vw, 40px);
   box-sizing: border-box;
   transition: all 0.1s;
   cursor: pointer;
   user-select: none;
   background-color: white;
-}
-
-.case:hover {
-  font-size: 2.2vw;
 }
 
 .color-case-bleu {
@@ -73,10 +68,10 @@ h1 {
 
 .shadow-piece-bleu {
   text-shadow: 
-    2px 2px 7px rgb(0, 0, 110),
-    2px -2px 7px rgb(0, 0, 110),
-    -2px 2px 7px rgb(0, 0, 110),
-    -2px -2px 7px rgb(0, 0, 110);
+    3px 3px 4px rgb(0, 0, 110),
+    3px -3px 4px rgb(0, 0, 110),
+    -3px 3px 4px rgb(0, 0, 110),
+    -3px -3px 4px rgb(0, 0, 110);
 }
 
 .shadow-piece-rouge {
@@ -87,10 +82,20 @@ h1 {
     -2px -2px 7px rgb(150, 0, 0);
 }
 
+.piece {
+  position: relative;
+  width: 80%;
+  height: 80%;
+}
+
+.piece:hover {
+  transform: scale(1.15);
+  transition: all 0.2s;
+}
+
 .case-select {
   border: 4px solid rgb(0, 170, 133);
   outline: 2px solid rgb(0, 170, 133);
-  font-size: 2.1vw;
   z-index: 10;
 }
 
