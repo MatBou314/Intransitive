@@ -71,8 +71,7 @@ export function newBoard() {
 }
 
 export function getMoves(board) {
-  const pieces = board.pieces;
-  const turn = board.turn;
+  const {pieces, turn} = board;
   let moves = [];
   for (let fromIdx = 0; fromIdx < 81; fromIdx++) {
     const piece = pieces[fromIdx];

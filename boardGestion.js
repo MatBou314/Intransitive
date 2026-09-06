@@ -139,7 +139,7 @@ function createNavArrows(affBoard, mainPanel) {
 }
 
 function createBotPanel(affBoard, mainPanel) {
-  const botName = !affBoard.bot1.isControlled ? "bot1" : "bot2"
+  const botName = (!affBoard.bot1.isControlled) ? "bot1" : "bot2"
   const bot = affBoard[botName];
   bot.isControlled = true;
   
@@ -293,10 +293,9 @@ function updateCases(affBoard, casesIdx) {
 }
 
 function updateInfo(affBoard) {
-  const infoElem = affBoard.infoElem;
-  const board = affBoard.board;
+  const {infoElem, board} = affBoard;
   if (!infoElem) return;
-  infoElem.textContent = !isGameOver(affBoard.board) ? `${board.turn ? "Blue" : "Red"} to play\n\n` : `victory for ${winner(affBoard.board) ? "Blue" : "Red"}\n\n`;
+  infoElem.textContent = (!isGameOver(affBoard.board)) ? `${board.turn ? "Blue" : "Red"} to play\n\n` : `victory for ${winner(affBoard.board) ? "Blue" : "Red"}\n\n`;
 }
 
 function manageClick(affBoard, caseIdx) {
@@ -358,7 +357,7 @@ export function getBotMove(affBoard) {
 }
 
 function playWithHistory(affBoard, from, to) {
-  const history = affBoard.history;
+  const {history} = affBoard;
   history.splice(history.length-affBoard.backMoves);
   const move = play(affBoard.board, from, to);
   history.push(move);
@@ -374,9 +373,8 @@ function undo(affBoard) {
   if (affBoard.backMoves >= affBoard.history.length) return;
   cancelAllBotRequests()
   affBoard.backMoves += 1;
-  const history = affBoard.history;
+  const {history, caseSelect} = affBoard;
   const move = history[history.length-affBoard.backMoves];
-  const caseSelect = affBoard.caseSelect;
   affBoard.caseSelect = null;
   affBoard.botPause = true;
   UndoMove(affBoard.board, move); 
@@ -390,11 +388,10 @@ function redo(affBoard) {
   if (affBoard.backMoves <= 0) return;
   cancelAllBotRequests()
   affBoard.botPause = true;
-  const history = affBoard.history;
+  const {history, caseSelect} = affBoard;
   const move = history[history.length-affBoard.backMoves];
   play(affBoard.board, move.from, move.to);
   affBoard.backMoves -= 1; 
-  const caseSelect = affBoard.caseSelect;
   affBoard.caseSelect = null;
   updateInfo(affBoard);
   updateCases(affBoard, [move.from, move.to, caseSelect]);
