@@ -6,12 +6,12 @@ const piecesName = [null, "rock", "paper", "scissors"];
 const colsName = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
 const piecesImage = ["", "🪨", "📄", "✂️"];
 const piecesImg = {
-  1: "/pieces/blueRock.png",
-  2: "/pieces/bluePaper.png",
-  3: "/pieces/blueScissors.png",
-  "-1": "/pieces/redRock.png",
-  "-2": "/pieces/redPaper.png",
-  "-3": "/pieces/redScissors.png"
+  1: "./pieces/blueRock.png",
+  2: "./pieces/bluePaper.png",
+  3: "./pieces/blueScissors.png",
+  "-1": "./pieces/redRock.png",
+  "-2": "./pieces/redPaper.png",
+  "-3": "./pieces/redScissors.png"
 }
 export const analysisInfo = { depth: 0, move:0, eval:0 }
 
