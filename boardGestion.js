@@ -278,8 +278,8 @@ function initBoardElem(affBoard) {
     caseElem.classList.add("case");
     caseElem.classList.add("color-case-vide");
     caseElem.addEventListener("pointerdown", () => {manageClick(affBoard, i)});
-    if (i === 8) caseElem.classList.add("color-case-bleu");
-    if (i === 72) caseElem.classList.add("color-case-rouge");
+    if (i === 8) caseElem.classList.add("color-case-rouge");
+    if (i === 72) caseElem.classList.add("color-case-bleu");
     affBoard.elem.appendChild(caseElem);
   }
   updateCases(affBoard, [...Array(81).keys()]);

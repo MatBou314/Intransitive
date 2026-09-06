@@ -1,4 +1,4 @@
-import { play, UndoMove, isGameOver, casesContour, casesContourNoDiagonal } from "./board.js";
+import { casesContour, casesContourNoDiagonal } from "./board.js";
 
 const captures = [null, 3, 1, 2];
 
@@ -190,6 +190,10 @@ function getMovesOrdered(moves, bestMove) {
   }
   moves.subarray(0, count).sort()
   return count;
+}
+
+function isGameOverOpt() {
+  return (bluePiecesCount <= 0) || (redPiecesCount <= 0) || (pieces[8] > 0) || (pieces[72] < 0);
 }
 
 function winner() {
@@ -419,9 +423,7 @@ function UndoHash(from, to) {
   hash = lastHash;
 }
 
-function isGameOverOpt() {
-  return (bluePiecesCount <= 0) || (redPiecesCount <= 0) || (pieces[8] > 0) || (pieces[72] < 0);
-}
+
 
 export function randomMove(board) {
   const moves = getMoves(board);
@@ -445,16 +447,34 @@ for (let i = 0; i < 81; i++) {
   SQUAREVALUE[i] = 10 - DIST_TABLE[81 * i + 8];
 }
 
-function imbalance2() {
-  const bluePower = (blueRCount * (5 + redSCount - redPCount) 
-                    + bluePCount * (5 + redRCount - redSCount) 
-                    + blueSCount * (5 + redPCount - redRCount));
+const soloValue = [0, 5, 10, 12, 14]
 
-  const redPower = (redRCount * (5 + blueSCount - bluePCount) 
-                    + redPCount * (5 + blueRCount - blueSCount) 
-                    + redSCount * (5 + bluePCount - blueRCount));
-  return bluePower - redPower;
+function getMatchupAdvantage(bR, bP, bS, rR, rP, rS) {
+  if (bR === rR && bP === rP && bS === rS) return 0;
+  let score = 0;
+
+  if (rP === 0) score += soloValue[bR];
+  else score += bR/rP;
+
+  if (rS === 0) score += soloValue[bP];
+  else score += bP/rS;
+
+  if (rR === 0) score += soloValue[bS];
+  else score += bS/rR;
+
+  if (bP === 0) score += soloValue[rR];
+  else score -= rR/bP;
+
+  if (bS === 0) score += soloValue[rP];
+  else score -= rP/bS;
+
+  if (bR === 0) score += soloValue[rS];
+  else score -= rS/bR;
+  return score * 100
 }
+const MATERIAL_TABLE2 = new Uint8Array(4096);
+
+
 
 function imbalance() {
   const idx = (blueRCount << 10) | (bluePCount << 8) | (blueSCount << 6) | (redRCount << 4) | (redPCount << 2) | redSCount;
@@ -496,13 +516,13 @@ function minimaxMaterial(bR, bP, bS, rR, rP, rS, turn) {
   return bestEval;
 }
 
-const MATERIAL_TABLE = new Int16Array(4096);
+const MATERIAL_TABLE = new Int16Array(6400);
 function initMaterialTable() {
   for (let bR = 0; bR <= 3; bR++) {
-    for (let bP = 0; bP <= 3; bP++) {
+    for (let bP = 0; bP <= 4; bP++) {
       for (let bS = 0; bS <= 3; bS++) {
         for (let rR = 0; rR <= 3; rR++) {
-          for (let rP = 0; rP <= 3; rP++) {
+          for (let rP = 0; rP <= 4; rP++) {
             for (let rS = 0; rS <= 3; rS++) {
               const scoreBlueFirst = minimaxMaterial(bR, bP, bS, rR, rP, rS, true);
               const scoreRedFirst = minimaxMaterial(bR, bP, bS, rR, rP, rS, false);
@@ -768,6 +788,10 @@ function evalBasique() {
   return imbalance() + piecesProximity(5, 5) + goalProximity();
 }
 
+function evalBasique2() {
+  return getMatchupAdvantage(blueRCount, bluePCount, blueSCount, redRCount, redPCount, redSCount) + piecesProximity(10, 10) + goalProximity();
+}
+
 
 let memory = new Map();
 let nodeCount = 0;
@@ -983,7 +1007,7 @@ let totNode = 0;
 let computedMoves = 0;
 
 function iterativeDeepening(board, maxTime, evalFunction = evalBasique) {
-  //console.profile("Iterative");
+  console.profile("Iterative");
   timeLimit = maxTime;
   startTime = Date.now();
   let bestMove = null;
@@ -994,7 +1018,7 @@ function iterativeDeepening(board, maxTime, evalFunction = evalBasique) {
   movePtr = 0;
   nodeCount = 0;
   try {
-    for (let depth = 2; depth < 2048; depth++) {
+    for (let depth = 1; depth < 2048; depth++) {
       const [currentEval, currentMove] = getMinimax(depth, evalFunction, bestMove);
       bestEval = currentEval;
       bestMove = currentMove;
@@ -1013,19 +1037,24 @@ function iterativeDeepening(board, maxTime, evalFunction = evalBasique) {
   }
   totNode += nodeCount;
   computedMoves++;
-  console.log(`D ${evalFunction.name} (${board.turn ? "blue" : "red"}):
+  console.log(`A ${evalFunction.name} (${board.turn ? "blue" : "red"}):
   depth: ${reachedDepth}
   eval ${Math.round(bestEval)/100}
   nodeCount: ${nodeCount}
   meanNode: ${totNode/computedMoves}
   `);
-  //console.profileEnd("Iterative");
+  console.profileEnd("Iterative");
   return [bestEval, bestMove];
 }
 
 export const botList1 = {
   "Bot A1": (board, maxTime) => {
     const move = iterativeDeepening(board, maxTime, evalBasique)[1];
+    return [move >> 8, move & 255];
+  },
+
+  "Bot A2": (board, maxTime) => {
+    const move = iterativeDeepening(board, maxTime, evalBasique2)[1];
     return [move >> 8, move & 255];
   },
 }
