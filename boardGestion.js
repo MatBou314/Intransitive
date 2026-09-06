@@ -18,6 +18,12 @@ export const mainAffBoard = newAffBoard();
 export let worker = new Worker("worker.js", {type: "module"});
 const moveRequests = new Map();
 
+function squareName(idx) {
+  const col = colsName[idx % 9];
+  const row = 8-Math.floor(idx / 9);
+  return `${col}${row}`;
+}
+
 function initWorker() {
   worker = new Worker("worker.js", {type: "module"});
   worker.onmessage = function(event) {
@@ -231,7 +237,7 @@ function createBotAnalysis(affBoard, mainPanel) {
   setInterval(() => {
     analysisElem.textContent = `depth: ${analysisInfo.depth}
     eval: ${analysisInfo.eval}
-    move: ${analysisInfo.move}`;
+    move: ${squareName(analysisInfo.move[0])} => ${squareName(analysisInfo.move[1])}`;
   }, 100)
 }
 

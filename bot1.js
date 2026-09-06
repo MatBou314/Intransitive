@@ -1003,7 +1003,7 @@ function iterativeDeepening(board, maxTime, evalFunction = evalBasique) {
         type: "analysisUpdate",
         depth: reachedDepth,
         eval: Math.round(bestEval)/100,
-        move: `${currentMove >> 8} => ${currentMove & 255}`
+        move: [currentMove >> 8, currentMove & 255]
       });
       if (Math.abs(bestEval) > 9999999) break;
       console.log(depth, nodeCount);
@@ -1019,7 +1019,7 @@ function iterativeDeepening(board, maxTime, evalFunction = evalBasique) {
   nodeCount: ${nodeCount}
   meanNode: ${totNode/computedMoves}
   `);
-  //console.profileEnd("Iterative")
+  //console.profileEnd("Iterative");
   return [bestEval, bestMove];
 }
 
