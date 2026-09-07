@@ -472,7 +472,16 @@ function getMatchupAdvantage(bR, bP, bS, rR, rP, rS) {
   else score -= rS/bR;
   return score * 100
 }
-const MATERIAL_TABLE2 = new Uint8Array(4096);
+
+function getGoodTrades(bR, bP, bS, rR, rP, rS) {
+  let goodTrades = []
+  if (bR > rP) goodTrades.push(1);
+  if (bP > rS) goodTrades.push(2);
+  if (bS > bP) goodTrades.push(1);
+  if (bR > bP) goodTrades.push(1);
+  if (bR > bP) goodTrades.push(1);
+  if (bR > bP) goodTrades.push(1);
+}
 
 
 
@@ -1030,7 +1039,7 @@ function iterativeDeepening(board, maxTime, evalFunction = evalBasique) {
         move: [currentMove >> 8, currentMove & 255]
       });
       if (Math.abs(bestEval) > 9999999) break;
-      console.log(depth, nodeCount);
+      console.log("depth: " + depth + ",  nodesCount: " + nodeCount + ",  time: " + (Date.now() - startTime));
     }
   } catch (error) {
       if (error.message !== "Timeout") throw error;

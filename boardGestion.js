@@ -4,7 +4,6 @@ import { botList } from "./allBots.js";
 
 const piecesName = [null, "rock", "paper", "scissors"];
 const colsName = ["a", "b", "c", "d", "e", "f", "g", "h", "i"];
-const piecesImage = ["", "🪨", "📄", "✂️"];
 const piecesImg = {
   1: "./pieces/blueRock.png",
   2: "./pieces/bluePaper.png",
@@ -28,7 +27,7 @@ const moveRequests = new Map();
 
 function squareName(idx) {
   const col = colsName[idx % 9];
-  const row = 8-Math.floor(idx / 9);
+  const row = 9-Math.floor(idx / 9);
   return `${col}${row}`;
 }
 
